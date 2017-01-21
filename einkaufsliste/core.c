@@ -10,7 +10,7 @@
 
 int menu();
 void input_shop();
-void new_shop();
+void new_shop(char name[], char street[], int *zipcode, char city[]);
 void new_bill();
 void new_product();
 
@@ -49,20 +49,24 @@ void main() {
  
   int selection;
   selection=menu();
-
-
-//  printf("auswahl: %i", selection);
-  switch (selection) {
-    case '0': 
-      printf("goodbye!\n");
-      exit;
-    case '1': 
-      input_shop();
-      break;
-    default: 
-      printf("Ungültige Eingabe\n");
-      exit;
+  while (selection > '0') {
+    switch (selection) {
+      case '0': 
+        printf("goodbye!\n");
+        exit;
+      case '1': 
+        input_shop();
+        break;
+      case '2': 
+        break;
+      default: 
+        printf("Ungültige Eingabe\n");
+        exit;
+    }
+    selection=menu();
+    printf("%d\n",selection);
   }
+    printf("%c\n",menu());
 }
 
 int menu() {
@@ -80,7 +84,7 @@ int menu() {
   select=getchar();
   // debug output
   // printf("%i\n",select);
-  if (select == 10) select=0;
+  if (select == 10) select = 0;
   return select;
 }
 void input_shop() {
@@ -94,33 +98,31 @@ void input_shop() {
   printf("Name: ");
   scanf ("%s",s_name);
   getchar();
-  /*
   printf("Straße: ");
-  fgets(s_adr_street,sizeof(s_adr_street),stdin);
+  scanf ("%s",s_adr_street);
   getchar();
   printf("PLZ: ");
-//  fgets(s_adr_zip,sizeof(s_adr_zip),stdin);
   scanf("%i",&s_adr_zip);  
   getchar();
   printf("Stadt: ");
-  fgets(s_adr_city,sizeof(s_adr_city),stdin);
+  scanf("%s",s_adr_city);  
   getchar();
   printf("------\n");
   printf("Name: %s\n",s_name);
   printf("Straße: %s\n",s_adr_street);
   printf("PLZ: %d\n",s_adr_zip);
   printf("Stadt: %s\n", s_adr_city);
-  */
   printf("------\nSind diese Eingaben Korrekt(y/n)?: ");
   correct=getchar();
   if (correct == 'y') {
-    printf("YAY!");
-    // call new_shop and hand vars over
-  } // if not just end
+    // call new_shop() 
+    new_shop(s_name, s_adr_street, &s_adr_zip, s_adr_city);
+  }
+
   
 }
 
-void new_shop() {
+void new_shop(char name[], char street[], int *zipcode, char city[]) {
   struct shop *shop_pt;
   // check if first shop is already existing
   // if not create it
@@ -129,17 +131,41 @@ void new_shop() {
       fprintf(stderr, "Kein Speicherplatz vorhanden fuer neuen shop\n");
       return;
     }
-    struct shop shop_0;
+    // fill struct with function parameters
+    shop_0->id=0;
+    strcpy(shop_0->name,name);
+    strcpy(shop_0->adr_street,street);
+    strcpy(shop_0->adr_city,city);
+    shop_0->adr_zip=*zipcode;
+    // reset pointer to next value as we're on the last
+    shop_0->next=NULL;
+    printf("ID: %i\n",shop_0->id);
+    printf("Name: %s\n",shop_0->name);
   // otherwise hop thorugh chain until shop_pt->next is NULL 
+  // */
   }else {
     shop_pt = shop_0;
+    int i=0;
     while (shop_pt->next != NULL) {
       shop_pt=shop_pt->next;
+      i++;
     }
     if((shop_pt->next = malloc(sizeof(struct shop))) == NULL) {
       fprintf(stderr, "Kein Speicherplatz vorhanden fuer neuen shop\n");
       return;
     }
+    // set current shop_pt pointer to newly created struct
+    shop_pt=shop_pt->next; 
+    // fill struct with function parameters
+    shop_pt->id=i;
+    strcpy(shop_pt->name,name);
+    strcpy(shop_pt->adr_street,street);
+    strcpy(shop_pt->adr_city,city);
+    shop_pt->adr_zip=*zipcode;
+    // reset pointer to next value as we're on the last
+    shop_pt->next=NULL;
+    printf("ID: %i\n",shop_pt->id);
+    printf("Name: %s\n",shop_pt->name);
   }
 }
 
