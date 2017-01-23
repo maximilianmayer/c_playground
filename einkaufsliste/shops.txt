@@ -1,0 +1,1 @@
+ID:0, Name:Shop1, Address:Bummelgasse1, zipcode:12345, City:Musterstadt
