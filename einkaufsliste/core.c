@@ -13,13 +13,6 @@
  * Step3: Rechnungen anlegen & speichern -> tbd
  */
 
-int menu_main();
-int menu_shop();
-void input_shop();
-void new_shop(char name[], char street[], int *zipcode, char city[]);
-void new_bill();
-void new_product();
-//void shop_write(struct shop *pt);
 
 // 
 struct shop {
@@ -48,20 +41,39 @@ struct product {
   //struct bill *bill_pt; // pointer to bill ID
 };
 
-  struct shop *shop_0=NULL;
-  struct shop *shop_last=NULL;
+// create datatype for structs
+typedef struct shop shop_st;
+
+// create default shop_st pointer
+shop_st *shop_0=NULL;
+shop_st *shop_last=NULL;
+
+const char file_shop[10]="shops.txt\0";
+
+int menu_main();
+int menu_shop();
+void input_shop();
+void new_shop(char name[], char street[], int *zipcode, char city[]);
+void get_shops();
+int fwrite_shop(shop_st *shop_pt);
+
+/* 
+ * functions not yet implemented
+ *
+void new_bill();
+void new_product();
+ *
+ */
 
 
-void main() {
- 
+int main() {
   int selection, sel_menu;
   do {
     selection=menu_main(); 
-    // debug output
-    //printf("DEBUG: Wert von selection: %d\n",selection);
     switch (selection) {
       case 0: 
         printf("Goodbye!\n");
+        return 0;
         break;
       case 1:
         //printf("DEBUG: 1 entered %i\n", selection);
@@ -74,31 +86,31 @@ void main() {
               input_shop();
               break;
             case 2:
-              printf("Funktion noch nicht implementiert!\n");
+              get_shops();
+              //printf("Funktion noch nicht implementiert!\n");
               break;
             case 3:
               printf("Funktion noch nicht implementiert!\n");
               break;
             default: 
-              printf("Ungültige Eingabe! Kehre zurück zu vorigem Menü zurück.\n");
+              printf("Ungültige Eingabe! Kehre zurück zu vorigem Menü zurück.");
               break;
           }
-        }
-        while (sel_menu > 0);
+        } while (sel_menu > 0);
         break;
       case 2:
         printf("funktion noch nicht implementiert! \n", selection);
         break;
       default: 
         printf("Ungültige Eingabe\n");
+        return 1;
         break;
     }
     /* some debug output -- remove later
     printf("DEBUG: int-Wert von selection in loop: %d\n",selection);
     printf("DEBUG: end of loop reached!\n");
     */
-  }
-  while (selection > 0);
+  } while (selection > 0);
 }
 
 // START MENU
@@ -108,7 +120,7 @@ int menu_main() {
   int select;
   printf("\n- Main Menu\n%s\n",delim);  
   printf("Bitte auswaehlen:\n");
-  printf("1: neuen Shop anlegen\n");
+  printf("1: shop menu\n");
   /*
   printf("2: neuen Beleg eingeben\n");
   printf("3: neues Produkt anlegen\n");
@@ -172,6 +184,32 @@ void input_shop() {
   }
 }
 
+void get_shops() {
+  struct shop *shop_pt;
+  FILE *file;
+  if ( (file = fopen(file_shop,"r")) != NULL) {
+    const char s[2] = ",";     
+    char *token;
+    char line[256];
+    memcpy(&shop_pt, &shop_0, sizeof(shop_0));
+    while ( fgets(line, sizeof(line), file) )  {
+      token = strtok(line,s);
+      printf("Token: %s\n",token);
+      /*
+      while (token != NULL) {
+        printf("Token: %s\n",token);
+      token = strtok(NULL,s);
+      }
+      */
+      
+      //printf("Shop ID: %i",shop_pt->id);
+    }
+  } else {
+    perror("cannot open file: file_shop");
+    return;
+  }
+  fclose(file);
+}
 
 void new_shop(char name[], char street[], int *zipcode, char city[]) {
   struct shop *shop_pt;
@@ -179,7 +217,7 @@ void new_shop(char name[], char street[], int *zipcode, char city[]) {
   // if not create it
   if (shop_0 == NULL ) {
     if((shop_0 =  malloc(sizeof(struct shop))) == NULL) {
-      fprintf(stderr, "Kein Speicherplatz vorhanden fuer neuen shop\n");
+      perror("Kein Speicherplatz vorhanden fuer neuen shop");
       return;
     }
     memcpy(&shop_pt, &shop_0, sizeof(shop_0));
@@ -202,7 +240,7 @@ void new_shop(char name[], char street[], int *zipcode, char city[]) {
       i++;
     }
     if((shop_pt->next = malloc(sizeof(struct shop))) == NULL) {
-      fprintf(stderr, "Kein Speicherplatz vorhanden fuer neuen shop\n");
+      perror("Kein Speicherplatz vorhanden fuer neuen shop");
       return;
     }
     // set current shop_pt pointer to newly created struct
@@ -215,35 +253,23 @@ void new_shop(char name[], char street[], int *zipcode, char city[]) {
     shop_pt->adr_zip=*zipcode;
     // reset pointer to next value as we're on the last
     shop_pt->next=NULL;
-    //shop_write(shop_pt);
-
   }
-  // write record to file
-  char filename[10]="shops.txt";
-  //printf("filename: %s", filename);
-  
+
+  if ( fwrite_shop(shop_pt) != 0) {
+    printf("Es gab einen Fehler beim Speichern des Datensatzes.\n");
+  }
+}
+
+int fwrite_shop(shop_st *shop_pt) {
   FILE *file;
-  if ( (file = fopen(filename,"a")) == NULL ) {
-    printf("error: cannot open file: %s\n",filename);
+  if ( (file = fopen(file_shop,"a")) == NULL ) {
+    perror("cannot open file: file_shop");
+    return 1;
   }else {
-    printf("Schreibe Datensatz in datei: %s\n",filename);
-    fprintf(file,"ID:%i, Name:%s, Address:%s, zipcode:%i, City:%s\n", shop_pt->id, shop_pt->name, shop_pt->adr_street, shop_pt->adr_zip, shop_pt->adr_city);
+    printf("Schreibe Datensatz in datei: %s\n",file_shop);
+    fprintf(file,"%i,%s,%s,%i,%s\n", shop_pt->id, shop_pt->name, shop_pt->adr_street, shop_pt->adr_zip, shop_pt->adr_city);
     fclose(file);
   }
-  
-}
-/*
-void shop_write(struct shop *pt) {
-    printf("ID: %i\n",pt->id);
-    printf("Name: %s\n",pt->name);
-
-}
-*/
-
-
-void new_bill() {
+  return 0;
 }
 
-void new_product() {
-
-}

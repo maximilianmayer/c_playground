@@ -1,1 +1,3 @@
-ID:0, Name:Shop1, Address:Bummelgasse1, zipcode:12345, City:Musterstadt
+0,Shop1,Bummelgasse1,12345,Musterstadt
+1,ABC,Lalaroad.1,12312,Musterhause
+2,LIDL,Einkaufsmeile-1,22121,Mullhouse
