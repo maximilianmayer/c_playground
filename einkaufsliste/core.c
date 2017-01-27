@@ -13,7 +13,8 @@
  * Step3: Rechnungen anlegen & speichern -> tbd
  */
 
-int menu();
+int menu_main();
+int menu_shop();
 void input_shop();
 void new_shop(char name[], char street[], int *zipcode, char city[]);
 void new_bill();
@@ -53,9 +54,9 @@ struct product {
 
 void main() {
  
-  int selection;
+  int selection, sel_menu;
   do {
-    selection=menu(); 
+    selection=menu_main(); 
     // debug output
     //printf("DEBUG: Wert von selection: %d\n",selection);
     switch (selection) {
@@ -64,7 +65,26 @@ void main() {
         break;
       case 1:
         //printf("DEBUG: 1 entered %i\n", selection);
-        input_shop();
+        do {
+          sel_menu=menu_shop();
+          switch (sel_menu) {
+            case 0: // no action, just return;
+              break;
+            case 1:
+              input_shop();
+              break;
+            case 2:
+              printf("Funktion noch nicht implementiert!\n");
+              break;
+            case 3:
+              printf("Funktion noch nicht implementiert!\n");
+              break;
+            default: 
+              printf("Ungültige Eingabe! Kehre zurück zu vorigem Menü zurück.\n");
+              break;
+          }
+        }
+        while (sel_menu > 0);
         break;
       case 2:
         printf("funktion noch nicht implementiert! \n", selection);
@@ -81,21 +101,44 @@ void main() {
   while (selection > 0);
 }
 
-int menu() {
-  char delim[8]="======\n";
+// START MENU
+
+int menu_main() {
+  char delim[8]="=======";
   int select;
-  printf("Menu\n%s",delim);  
+  printf("\n- Main Menu\n%s\n",delim);  
   printf("Bitte auswaehlen:\n");
   printf("1: neuen Shop anlegen\n");
+  /*
   printf("2: neuen Beleg eingeben\n");
   printf("3: neues Produkt anlegen\n");
+  */
   printf("0: Beenden\n");
-  printf("%sEingabe: ",delim);
+  printf("%s\nEingabe: ",delim);
   scanf("%i",&select);
   getchar();
   if (select == 10) select = 0;
   return select;
 }
+
+int menu_shop() {
+  char delim[8]="=======";
+  int select;
+  printf("\n- Shop Menu\n%s\n",delim);  
+  printf("Bitte auswaehlen:\n");
+  printf("1: neuen Shop anlegen\n");
+  printf("2: Shops anzeigen\n");
+  printf("3: Shop bearbeiten\n");
+  printf("0: Beenden\n");
+  printf("%s\nEingabe: ",delim);
+  scanf("%i",&select);
+  getchar();
+  if (select == 10) select = 0;
+  return select;
+}
+
+// END MENU
+
 void input_shop() {
   char s_name[20]; 
   int  s_adr_zip;
@@ -127,9 +170,8 @@ void input_shop() {
     // call new_shop() 
     new_shop(s_name, s_adr_street, &s_adr_zip, s_adr_city);
   }
-
-  
 }
+
 
 void new_shop(char name[], char street[], int *zipcode, char city[]) {
   struct shop *shop_pt;
@@ -197,6 +239,7 @@ void shop_write(struct shop *pt) {
 
 }
 */
+
 
 void new_bill() {
 }
