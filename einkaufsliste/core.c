@@ -76,7 +76,6 @@ int main() {
         return 0;
         break;
       case 1:
-        //printf("DEBUG: 1 entered %i\n", selection);
         do {
           sel_menu=menu_shop();
           switch (sel_menu) {
@@ -87,13 +86,12 @@ int main() {
               break;
             case 2:
               get_shops();
-              //printf("Funktion noch nicht implementiert!\n");
               break;
             case 3:
               printf("Funktion noch nicht implementiert!\n");
               break;
             default: 
-              printf("Ungültige Eingabe! Kehre zurück zu vorigem Menü zurück.");
+              printf("Ungültige Eingabe! Kehre zurück zu vorigem Menü zurück.\n");
               break;
           }
         } while (sel_menu > 0);
@@ -106,10 +104,6 @@ int main() {
         return 1;
         break;
     }
-    /* some debug output -- remove later
-    printf("DEBUG: int-Wert von selection in loop: %d\n",selection);
-    printf("DEBUG: end of loop reached!\n");
-    */
   } while (selection > 0);
 }
 
