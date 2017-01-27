@@ -185,18 +185,41 @@ void get_shops() {
     const char s[2] = ",";     
     char *token;
     char line[256];
-    memcpy(&shop_pt, &shop_0, sizeof(shop_0));
     while ( fgets(line, sizeof(line), file) )  {
+      // if shop == null create it
+      if (shop_0 == NULL ) {
+        if((shop_0 =  malloc(sizeof(struct shop))) == NULL) {
+          perror("Kein Speicherplatz vorhanden fuer neuen shop");
+          return;
+        } else {
+          memcpy(&shop_pt, &shop_0, sizeof(shop_0));
+        }// else iterate over next until we get the last element. then create new one
+      }else {
+        memcpy(&shop_pt, &shop_0, sizeof(shop_0));
+        while (shop_pt->next != NULL) {
+          shop_pt=shop_pt->next;
+        }
+        if((shop_pt->next = malloc(sizeof(struct shop))) == NULL) {
+          perror("Kein Speicherplatz vorhanden fuer neuen shop");
+          return;
+        }
+      }
       token = strtok(line,s);
-      printf("Token: %s\n",token);
+    
+      // printf("Token: %s\t",token);   // some debug output
       /*
       while (token != NULL) {
         printf("Token: %s\n",token);
       token = strtok(NULL,s);
       }
       */
+      shop_pt->id = atoi(token);
+      printf("Shop ID: %i\n",shop_pt->id);
+      while (token != NULL) {
+        printf("Token: %s\n",token);
+      token = strtok(NULL,s);
+      }
       
-      //printf("Shop ID: %i",shop_pt->id);
     }
   } else {
     perror("cannot open file: file_shop");
